@@ -7,10 +7,10 @@ import time
 
 
 # Configurations
-GITLAB_TOKEN = "glpat--jxgve_mDs3W_k9-aNxb"
-GITHUB_TOKEN = "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"
-GITHUB_USERNAME = "icanbewill"
-GITLAB_USERNAME = "watchi"
+GITLAB_TOKEN = ""
+GITHUB_TOKEN = ""
+GITHUB_USERNAME = ""
+GITLAB_USERNAME = ""
 
 class Migrator:
     """Classe principale pour orchestrer la migration."""
