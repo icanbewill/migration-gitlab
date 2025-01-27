@@ -4,12 +4,13 @@
 
 ### Variables de Configuration
 
-Le script utilise les variables suivantes pour fonctionner :
+Le script utilise les variables suivantes pour fonctionner (dans le fichier Migrator.py):
 
 - **GITLAB_TOKEN** : Le token d'accès GitLab (Personal Access Token).
 - **GITHUB_TOKEN** : Le token d'accès GitHub (Personal Access Token).
 - **GITLAB_USERNAME** : Votre nom d'utilisateur ou groupe GitLab.
 - **GITHUB_USERNAME** : Votre nom d'utilisateur GitHub.
+
 - **GITLAB_API_URL** *(optionnel)* : L'URL de l'API de votre serveur GitLab (par défaut `https://gitlab.com/api/v4`).
 
 ### Répertoire Temporaire
