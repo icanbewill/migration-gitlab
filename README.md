@@ -6,11 +6,11 @@
 
 Le script utilise les variables suivantes pour fonctionner :
 
-- **GITLAB_TOKEN** : Le token d'accès GitLab. (Personal Access Token)
-- **GITHUB_TOKEN** : Le token d'accès GitHub. (Personal Access Token)
-- **GITLAB_NAMESPACE** : Le nom de votre groupe ou de votre utilisateur sur GitLab (si nécessaire).
+- **GITLAB_TOKEN** : Le token d'accès GitLab (Personal Access Token).
+- **GITHUB_TOKEN** : Le token d'accès GitHub (Personal Access Token).
+- **GITLAB_USERNAME** : Votre nom d'utilisateur ou groupe GitLab.
 - **GITHUB_USERNAME** : Votre nom d'utilisateur GitHub.
-- **GITLAB_API_URL** : L'URL de l'API de votre serveur GitLab (par défaut `https://gitlab.istic.univ-rennes1.fr/api/v4`).
+- **GITLAB_API_URL** *(optionnel)* : L'URL de l'API de votre serveur GitLab (par défaut `https://gitlab.com/api/v4`).
 
 ### Répertoire Temporaire
 
@@ -23,14 +23,14 @@ Le script crée un répertoire temporaire `./temp_repos` pour cloner les projets
 Exécutez le script sans arguments pour migrer tous les projets de votre GitLab vers GitHub :
 
 ```
-python script-migration-git.py
+python Migrator.py
 ```
 ### Clonage et migration de projets spécifiques
 
 Vous pouvez fournir une liste de projets spécifiques à migrer en utilisant l'option --projects suivie de noms de projets séparés par des espaces :
 
 ```
-python script-migration-git.py --projects projet1 projet2 projet3
+python Migrator.py --projects projet1 projet2 projet3
 ```
 
 ### Ignorer certains projets
@@ -38,9 +38,12 @@ python script-migration-git.py --projects projet1 projet2 projet3
 Si vous souhaitez ignorer certains projets et ne pas les migrer (ni les cloner, ni les pousser vers GitHub), vous pouvez utiliser l'option --ignore suivie des noms de projets à ignorer :
 
 ```
-python script-migration-git.py --ignore mmm-tp1 sbd-tp3 sir-tp10 sir-tp7 sir-tp6 sir-tp2 sir-tp1 csr-tp5 mob-tp-start csr-tp4 csr-tp3 csr-tp2 aco-tp-editeur mob-tp-network csr-tp1 mob-tp-calculator
+python Migrator.py --ignore mmm-tp1 sbd-tp3 sir-tp10 sir-tp7 sir-tp6 sir-tp2 sir-tp1 csr-tp5 mob-tp-start csr-tp4 csr-tp3 csr-tp2 aco-tp-editeur mob-tp-network csr-tp1 mob-tp-calculator
 ```
 
+### Suppression des Dépôts GitHub Existants
+
+Si vous souhaitez **forcer la suppression d'un dépôt GitHub existant et le recréer** avant de le recréer, vous pouvez utiliser l'option `-f` ou `--force`.
 
 ## Fonctionnement du Script
 
