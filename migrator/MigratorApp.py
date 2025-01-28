@@ -84,7 +84,6 @@ class MigratorApp:
         self.gitlab_api_url.insert(0, "https://gitlab.istic.univ-rennes1.fr/api/v4")
         self.gitlab_api_url.grid(row=4, column=1, padx=10, pady=5)
 
-        # Options de migration
         tk.Label(root, text="Projets à migrer", bg=label_bg).grid(row=5, column=0, padx=10, pady=5, sticky="w")
         self.projects_to_migrate = tk.Entry(root, width=70, bg=entry_bg)
         self.projects_to_migrate.grid(row=5, column=1, padx=10, pady=5)
@@ -93,19 +92,27 @@ class MigratorApp:
         self.ignored_projects = tk.Entry(root, width=70, bg=entry_bg)
         self.ignored_projects.grid(row=6, column=1, padx=10, pady=5)
 
+
         # Mode "force"
         self.force_var = tk.BooleanVar()
         self.force_check = tk.Checkbutton(root, text="Forcer la migration", variable=self.force_var, bg="#f0f0f0")
         self.force_check.grid(row=7, column=1, padx=10, pady=5, sticky="w")
 
+        self.info = tk.LabelFrame(root, text="Informations", bg=label_bg, padx=10, pady=10)
+        self.info.grid(row=8, column=0, columnspan=2, padx=10, pady=10, sticky="w")
+        info_text = "Séparez les projets à migrer et/ou les projets à ignorer par des espaces."
+        info_label = tk.Label(self.info, text=info_text, bg=label_bg, fg="red", wraplength=500)
+        info_label.pack()
+
+
         # Boutons
-        tk.Button(root, text="Lancer la migration", command=self.start_migration_thread, bg=button_bg, fg=button_fg, relief="flat", activebackground=button_hover_bg).grid(row=8, column=0, padx=10, pady=10)
-        tk.Button(root, text="Voir les projets migrés", command=self.show_migrated_projects, bg=button_bg, fg=button_fg, relief="flat", activebackground=button_hover_bg).grid(row=8, column=1, padx=10, pady=10)
+        tk.Button(root, text="Lancer la migration", command=self.start_migration_thread, bg=button_bg, fg=button_fg, relief="flat", activebackground=button_hover_bg).grid(row=9, column=0, padx=10, pady=10)
+        tk.Button(root, text="Voir les projets migrés", command=self.show_migrated_projects, bg=button_bg, fg=button_fg, relief="flat", activebackground=button_hover_bg).grid(row=9, column=1, padx=10, pady=10)
 
         # Logs
-        tk.Label(root, text="Logs :", bg=label_bg).grid(row=9, column=0, padx=10, pady=5, sticky="nw")
-        self.log_text = tk.Text(root, height=15, width=70, bg=text_bg, fg=text_fg)
-        self.log_text.grid(row=10, column=0, columnspan=2, padx=10, pady=5)
+        tk.Label(root, text="Logs :", bg=label_bg).grid(row=10, column=0, padx=10, pady=5, sticky="nw")
+        self.log_text = tk.Text(root, height=12, width=70, bg=text_bg, fg=text_fg)
+        self.log_text.grid(row=11, column=0, columnspan=2, padx=10, pady=5)
 
     def start_migration_thread(self):
         """Lance la migration dans un thread séparé pour ne pas bloquer l'UI."""
@@ -139,9 +146,17 @@ class MigratorApp:
         """Affiche les projets migrés."""
         migrated_projects = self.migrator.repo_manager.migrated_projects
         if migrated_projects:
-            messagebox.showinfo("Projets migrés", "\n".join(migrated_projects))
+            # Trier les projets par timestamp
+            sorted_projects = sorted(migrated_projects, key=lambda x: x[1], reverse=True)
+            
+            # Format de chaque projet migré avec son timestamp
+            project_list = [f"{project} - Migré à {timestamp}" for project, timestamp in sorted_projects]
+            
+            # Affichage des projets migrés dans une boîte de dialogue
+            messagebox.showinfo("Projets migrés", "\n".join(project_list))
         else:
             messagebox.showinfo("Projets migrés", "Aucun projet migré.")
+
 
     def log(self, message):
         """Ajoute un message dans la section des logs."""

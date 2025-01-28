@@ -2,13 +2,14 @@ import os
 import shutil
 from subprocess import run
 import stat
+from datetime import datetime
 
 class RepoManager:
     """Classe pour gérer la migration et la suppression des dépôts."""
     def __init__(self, temp_dir, github_username):
         self.temp_dir = temp_dir
         self.github_username = github_username
-        self.migrated_projects = []
+        self.migrated_projects = []  # Liste des projets migrés avec leur timestamp
 
     @staticmethod
     def handle_remove_readonly(func, path, exc):
@@ -50,8 +51,21 @@ class RepoManager:
             run(["git", "-C", repo_dir, "remote", "add", "github", github_repo_url], check=True)
             run(["git", "-C", repo_dir, "push", "--mirror", "github"], check=True)
 
-            self.migrated_projects.append(repo_name)
+            # Enregistrer l'heure de migration du projet
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            self.migrated_projects.append((repo_name, timestamp))
         except Exception as e:
             self.log(f"Erreur lors de la migration du dépôt '{repo_name}' : {e}")
         finally:
             self.delete_local_repo(repo_dir)
+
+    def log_migrated_projects(self):
+        """Affiche les projets migrés par ordre de date/heure."""
+        # Trier les projets par timestamp
+        sorted_projects = sorted(self.migrated_projects, key=lambda x: x[1], reverse=True)
+        
+        if sorted_projects:
+            for project, timestamp in sorted_projects:
+                print(f"{project} - Migré à {timestamp}")
+        else:
+            print("Aucun projet migré.")
