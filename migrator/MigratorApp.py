@@ -111,8 +111,8 @@ class MigratorApp:
 
         # Logs
         tk.Label(root, text="Logs :", bg=label_bg).grid(row=10, column=0, padx=10, pady=5, sticky="nw")
-        self.log_text = tk.Text(root, height=12, width=70, bg=text_bg, fg=text_fg)
-        self.log_text.grid(row=11, column=0, columnspan=2, padx=10, pady=5)
+        self.log_text = tk.Text(root, height=12, width=70, bg=text_bg, fg=text_fg, state=tk.DISABLED) 
+        self.log_text.grid(row=10, column=0, columnspan=2, padx=10, pady=5)
 
     def start_migration_thread(self):
         """Lance la migration dans un thread séparé pour ne pas bloquer l'UI."""
@@ -157,11 +157,14 @@ class MigratorApp:
         else:
             messagebox.showinfo("Projets migrés", "Aucun projet migré.")
 
-
     def log(self, message):
         """Ajoute un message dans la section des logs."""
+        # Rendre temporairement activé pour insérer le texte
+        self.log_text.config(state=tk.NORMAL)  
         self.log_text.insert(tk.END, message + "\n")
         self.log_text.see(tk.END)
+        # Revenir à l'état désactivé après avoir inséré le texte
+        self.log_text.config(state=tk.DISABLED)
 
     def open_gitlab_token_url(self):
         """Ouvre la page GitLab pour générer un token d'accès."""
