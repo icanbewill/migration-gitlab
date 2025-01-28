@@ -4,7 +4,7 @@ from subprocess import run
 
 class GitLabAPI:
     
-    GITLAB_API_URL = "https://gitlab2.istic.univ-rennes1.fr/api/v4"
+    GITLAB_API_URL = "https://gitlab.istic.univ-rennes1.fr/api/v4"
 
     """Classe pour interagir avec l'API GitLab."""
     def __init__(self, token, username):

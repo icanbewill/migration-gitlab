@@ -17,18 +17,19 @@ class GitHubAPI:
 
         response = requests.post(self.GITHUB_USER_API_URL, headers=headers, json=data)
         if response.status_code == 201:
-            print(f"Dépôt GitHub créé : {repo_name}")
+            self.log(f"Dépôt GitHub créé : {repo_name}")
         elif response.status_code == 422 and force:
-            print(f"Le dépôt GitHub '{repo_name}' existe déjà. Suppression en cours...")
             if self.delete_repo(repo_name):
-                print(f"Dépôt GitHub '{repo_name}' supprimé avec succès. Création d'un nouveau dépôt...")
+                self.log(f"Dépôt GitHub '{repo_name}' supprimé avec succès. Création d'un nouveau dépôt...")
                 self.create_repo(repo_name, force=False)  # Recréation sans boucle infinie
             else:
-                print(f"Échec de la suppression du dépôt '{repo_name}'.")
+                self.log(f"Échec de la suppression du dépôt '{repo_name}'.")
         elif response.status_code == 422:
-            print(f"Le dépôt GitHub '{repo_name}' existe déjà. Utilisez 'force=True' pour le recréer.")
+            self.log(f"Le dépôt GitHub '{repo_name}' existe déjà. Utilisez 'force=True' pour le recréer.")
         else:
-            print(f"Erreur lors de la création du dépôt GitHub '{repo_name}': {response.json()}")
+            self.log(f"Erreur lors de la création du dépôt GitHub '{repo_name}': {response.json()}")
+
+        return response
 
     def delete_repo(self, repo_name):
         """Supprime un dépôt GitHub existant."""
@@ -39,5 +40,12 @@ class GitHubAPI:
         if response.status_code == 204:
             return True
         else:
-            print(f"Erreur lors de la suppression du dépôt '{repo_name}': {response.json()}")
+            self.log(f"Erreur lors de la suppression du dépôt '{repo_name}': {response.json()}")
             return False
+        
+    def repo_exists(self, repo_name):
+        """Vérifie si un dépôt existe déjà sur GitHub."""
+        headers = {"Authorization": f"token {self.token}"}
+        url = self.GITHUB_REPO_API_URL.format(username=self.username, repo_name=repo_name)
+        response = requests.get(url, headers=headers)
+        return response.status_code == 200
