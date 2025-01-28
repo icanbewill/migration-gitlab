@@ -38,6 +38,7 @@ class MigratorApp:
 
         root.resizable(False, False)
         root.configure(bg="#f0f0f0")
+        root.protocol("WM_DELETE_WINDOW", self.on_close)
 
         # Couleur de texte et de fond
         label_bg = "#E1EFFF"
@@ -175,3 +176,13 @@ class MigratorApp:
         """Ouvre la page GitHub pour générer un token d'accès."""
         url = "https://github.com/settings/tokens"
         webbrowser.open(url)
+
+    def on_close(self):
+        """Méthode pour demander une confirmation avant de fermer l'application."""
+        # Boîte de dialogue pour confirmer la fermeture
+        result = messagebox.askquestion("Confirmer la fermeture", 
+                                        "Êtes-vous sûr de vouloir fermer l'application ?\nLes migrations en cours seront arrêtées.")
+        if result == "yes":
+            self.root.destroy()
+        else:
+            pass
