@@ -3,14 +3,13 @@ from subprocess import run
 
 
 class GitLabAPI:
-    
-    GITLAB_API_URL = "https://gitlab.istic.univ-rennes1.fr/api/v4"
 
     """Classe pour interagir avec l'API GitLab."""
-    def __init__(self, token, username):
+    def __init__(self, token, username, log):
         self.token = token
         self.username = username
-        self.api_url = self.GITLAB_API_URL
+        self.api_url = None
+        self.log = log
 
     def get_projects(self):
         """Récupère la liste des projets GitLab."""

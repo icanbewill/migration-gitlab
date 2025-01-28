@@ -6,9 +6,10 @@ class GitHubAPI:
     GITHUB_REPO_API_URL = "https://api.github.com/repos/{username}/{repo_name}"
 
     """Classe pour interagir avec l'API GitHub."""
-    def __init__(self, token, username):
+    def __init__(self, token, username, log):
         self.token = token
         self.username = username
+        self.log = log
 
     def create_repo(self, repo_name, force=False):
         """Crée un dépôt sur GitHub. Supprime un dépôt existant si force=True."""

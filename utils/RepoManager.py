@@ -6,10 +6,11 @@ from datetime import datetime
 
 class RepoManager:
     """Classe pour gérer la migration et la suppression des dépôts."""
-    def __init__(self, temp_dir, github_username):
+    def __init__(self, temp_dir, github_username, log):
         self.temp_dir = temp_dir
         self.github_username = github_username
-        self.migrated_projects = []  # Liste des projets migrés avec leur timestamp
+        self.migrated_projects = [] 
+        self.log = log
 
     @staticmethod
     def handle_remove_readonly(func, path, exc):
