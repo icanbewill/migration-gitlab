@@ -54,6 +54,7 @@ class MigratorApp:
         help_menu = Menu(menu_bar, tearoff=0)
         help_menu.add_command(label="GitLab Token", command=self.open_gitlab_token_url)
         help_menu.add_command(label="GitHub Token", command=self.open_github_token_url)
+        help_menu.add_command(label="Documentation", command=self.show_documentation) 
         menu_bar.add_cascade(label="Aide", menu=help_menu)
         root.config(menu=menu_bar)
 
@@ -176,6 +177,30 @@ class MigratorApp:
         """Ouvre la page GitHub pour générer un token d'accès."""
         url = "https://github.com/settings/tokens"
         webbrowser.open(url)
+
+    def show_documentation(self):
+        """Ouvre une fenêtre de documentation avec les informations nécessaires."""
+        doc_window = tk.Toplevel(self.root)
+        doc_window.title("Documentation")
+        doc_window.geometry("600x400")
+        
+        documentation_text = """Bienvenue dans la documentation de MigratorApp.
+        
+        1. Configurez les tokens GitLab et GitHub dans les champs correspondants.
+        2. Cliquez sur 'Lancer la migration' pour commencer la migration des projets.
+        3. Le bouton 'Voir les projets migrés' vous permettra de voir les projets qui ont été migrés avec succès.
+        4. Si un projet existe déjà sur GitHub, il sera ignoré, sauf si vous activez l'option 'Forcer la migration'.
+        5. Séparez les projets à migrer et les projets à ignorer par des espaces.
+        """
+        
+        text_widget = tk.Text(doc_window, wrap=tk.WORD, height=20, width=70)
+        text_widget.insert(tk.END, documentation_text)
+        text_widget.config(state=tk.DISABLED)  # Grise la zone de texte pour empêcher toute modification
+        text_widget.pack(padx=10, pady=10)
+        
+        # Ajouter un bouton pour fermer la fenêtre
+        tk.Button(doc_window, text="Fermer", command=doc_window.destroy, bg="#4CAF50", fg="#FFFFFF").pack(pady=10)
+
 
     def on_close(self):
         """Méthode pour demander une confirmation avant de fermer l'application."""
