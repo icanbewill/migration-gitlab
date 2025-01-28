@@ -6,16 +6,19 @@ import webbrowser
 from .Migrator import Migrator
 from utils.RepoManager import RepoManager
 
+
+from utils.GitLabAPI import GitLabAPI
+from utils.GitHubAPI import GitHubAPI
+
 class MigratorApp:
     """Interface graphique pour orchestrer la migration des projets."""
-    def __init__(self, root, gitlab_api, github_api):
+    def __init__(self, root):
         self.root = root
-        gitlab_api.log = self.log
-        github_api.log = self.log
-        
-        repo_manager = RepoManager(temp_dir="./temp_repos", github_username=github_api.username)
-        repo_manager.log = self.log
-        self.migrator = Migrator(gitlab_api, github_api, repo_manager, self.log)
+
+        self.gitlab_api = GitLabAPI(token="", username="", log = self.log)
+        self.github_api = GitHubAPI(token="", username="", log = self.log)
+
+        self.default_gitlab_url = "https://gitlab.istic.univ-rennes1.fr/api/v4"
 
         # Configuration de la fenêtre principale
         root.title("MigratorApp - Migration GitLab vers GitHub")
@@ -61,29 +64,29 @@ class MigratorApp:
         # Configuration des tokens
         tk.Label(root, text="GitLab Token", bg=label_bg).grid(row=0, column=0, padx=10, pady=5, sticky="w")
         self.gitlab_token = tk.Entry(root, width=70, bg=entry_bg)
-        self.gitlab_token.insert(0, gitlab_api.token)
+        self.gitlab_token.insert(0, self.gitlab_api.token)
         self.gitlab_token.grid(row=0, column=1, padx=10, pady=5)
 
         tk.Label(root, text="GitHub Token", bg=label_bg).grid(row=1, column=0, padx=10, pady=5, sticky="w")
         self.github_token = tk.Entry(root, width=70, bg=entry_bg)
-        self.github_token.insert(0, github_api.token)
+        self.github_token.insert(0, self.github_api.token)
         self.github_token.grid(row=1, column=1, padx=10, pady=5)
 
         # Configuration des utilisateurs
         tk.Label(root, text="GitLab Username", bg=label_bg).grid(row=2, column=0, padx=10, pady=5, sticky="w")
         self.gitlab_username = tk.Entry(root, width=70, bg=entry_bg)
-        self.gitlab_username.insert(0, gitlab_api.username)
+        self.gitlab_username.insert(0, self.gitlab_api.username)
         self.gitlab_username.grid(row=2, column=1, padx=10, pady=5)
 
         tk.Label(root, text="GitHub Username", bg=label_bg).grid(row=3, column=0, padx=10, pady=5, sticky="w")
         self.github_username = tk.Entry(root, width=70, bg=entry_bg)
-        self.github_username.insert(0, github_api.username)
+        self.github_username.insert(0, self.github_api.username)
         self.github_username.grid(row=3, column=1, padx=10, pady=5)
 
         # Serveur GitLab
         tk.Label(root, text="GitLab API URL", bg=label_bg).grid(row=4, column=0, padx=10, pady=5, sticky="w")
         self.gitlab_api_url = tk.Entry(root, width=70, bg=entry_bg)
-        self.gitlab_api_url.insert(0, "https://gitlab.istic.univ-rennes1.fr/api/v4")
+        self.gitlab_api_url.insert(0, self.default_gitlab_url)
         self.gitlab_api_url.grid(row=4, column=1, padx=10, pady=5)
 
         tk.Label(root, text="Projets à migrer", bg=label_bg).grid(row=5, column=0, padx=10, pady=5, sticky="w")
@@ -131,11 +134,19 @@ class MigratorApp:
             ignored_projects = self.ignored_projects.get().split()
             force = self.force_var.get()
 
+            
+            repo_manager = RepoManager(temp_dir="./temp_repos", github_username=self.github_username.get(), log = self.log)
+            self.migrator = Migrator(self.gitlab_api, self.github_api, repo_manager, self.log)
+
             # Mise à jour des tokens et configurations
             self.migrator.gitlab_api.token = self.gitlab_token.get()
             self.migrator.github_api.token = self.github_token.get()
+
             self.migrator.gitlab_api.username = self.gitlab_username.get()
             self.migrator.github_api.username = self.github_username.get()
+            
+            self.migrator.gitlab_api.api_url = self.gitlab_api_url.get()
+            
 
             # Lancer la migration
             self.migrator.run(projects_to_migrate, ignored_projects, force)
